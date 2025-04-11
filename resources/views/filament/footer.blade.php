@@ -3,9 +3,12 @@
         h1.text-footer {
             margin-left: 320px !important;
         }
-        .footer-page {
-            z-index: 0 !important;
-        }
+    }
+    .footer-page {
+        z-index: 0 !important;
+    }
+    .fi-ta-ctn {
+        margin-bottom: 100px !important;
     }
 </style>
 <footer class="footer-page fixed bottom-0 left-0 z-20 w-full p-4 border-t border-gray-200 shadow flex justify-center items-center" style="background-color: #6477DB !important;">
