@@ -23,11 +23,22 @@ class BookLending extends Model
             }
         });
 
+        static::created(function ($bookLending) {
+            Report::create([
+                'book_lending_id' => $bookLending->id,
+                'return_date' => null,
+            ]);
+        });
+
         static::deleting(function ($bookLending) {
             $book = Book::where('id', $bookLending->book_id);
+            $report = Report::where('book_lending_id', $bookLending->id);
 
             if ($book->exists()) {
                 $book->update(['information' => 'available']);
+            }
+            if ($report->exists()) {
+                $report->delete();
             }
         });
     }

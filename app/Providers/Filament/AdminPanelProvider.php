@@ -71,7 +71,8 @@ class AdminPanelProvider extends PanelProvider
                 }
             )
             ->theme(asset('css/filament/panel/theme.css'))
-            ->darkMode(false);
+            ->darkMode(false)
+            ->databaseNotifications();
 
     }
 }
