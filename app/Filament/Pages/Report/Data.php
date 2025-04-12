@@ -130,6 +130,11 @@ class Data extends Page implements HasTable
                         });
                     }),
             ])
+            ->filtersTriggerAction(
+                fn (Action $action) => $action
+                    ->button()
+                    ->label('Filter'),
+            )
             ->actions([
                 EditAction::make()
                     ->form([
