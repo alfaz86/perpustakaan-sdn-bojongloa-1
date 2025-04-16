@@ -1,5 +1,4 @@
 <x-filament::page>
-    {{-- Tombol Sub Menu --}}
     <div class="flex flex-wrap gap-2 mb-6">
         @foreach ($this->getSubMenuItems() as $item)
             @php
@@ -20,6 +19,5 @@
         @endforeach
     </div>
 
-    {{-- Table Book Lending --}}
     {{ $this->table }}
 </x-filament::page>

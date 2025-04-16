@@ -1,5 +1,4 @@
 <x-filament::page>
-    {{-- Tombol Sub Menu --}}
     <div class="flex flex-wrap gap-2 mb-6">
         @foreach (App\Filament\Pages\Report\Data::getSubMenuItems() as $item)
             @php
