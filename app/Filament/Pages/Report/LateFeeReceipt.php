@@ -85,7 +85,7 @@ class LateFeeReceipt extends Page implements HasTable
             ->actions([
                 Action::make('download')
                     ->label('Download')
-                    ->url(fn($record) => Storage::disk('public')->url($record->file_path))
+                    ->url(fn($record) => route('late-fee-receipt.download', $record))
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('success')
                     ->openUrlInNewTab(),
