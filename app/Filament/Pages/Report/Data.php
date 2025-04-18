@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Report;
 use App\Filament\Exports\ReportExporter;
 use App\Models\Report;
 use Carbon\Carbon;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Pages\Page;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
@@ -131,7 +132,7 @@ class Data extends Page implements HasTable
                     }),
             ])
             ->filtersTriggerAction(
-                fn (Action $action) => $action
+                fn(Action $action) => $action
                     ->button()
                     ->label('Filter'),
             )
@@ -156,7 +157,10 @@ class Data extends Page implements HasTable
                     ->exporter(ReportExporter::class)
                     ->fileName('data-laporan-' . now()->timestamp)
                     ->label('Ekspor Laporan')
-                    ->color('primary'),
+                    ->color('primary')
+                    ->formats([
+                        ExportFormat::Xlsx,
+                    ]),
 
                 Action::make('total-fine')
                     ->label('Total Denda: ' . Report::getTotalFineFormatted())
