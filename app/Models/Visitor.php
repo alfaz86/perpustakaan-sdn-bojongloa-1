@@ -9,7 +9,6 @@ class Visitor extends Model
     protected $fillable = [
         'name',
         'identity_number',
-        'visiting_time',
     ];
 
     protected static function boot()
@@ -34,4 +33,8 @@ class Visitor extends Model
 
     }
 
+    public function visits()
+    {
+        return $this->hasMany(Visit::class);
+    }
 }

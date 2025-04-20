@@ -22,32 +22,31 @@ class VisitorResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $modelLabel = 'Kunjungan';
+    protected static ?string $modelLabel = 'Pengunjung';
 
-    protected static ?string $pluralModelLabel = 'Data Kunjungan';
+    protected static ?string $pluralModelLabel = 'Pengunjung';
 
-    protected static ?string $navigationLabel = 'Data Kunjungan';
+    protected static ?string $navigationLabel = 'Pengunjung';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Nama Pengunjung')
-                    ->required()
-                    ->maxLength(255),
+        return $form->schema([
+            TextInput::make('name')
+                ->label('Nama Pengunjung')
+                ->required()
+                ->maxLength(255),
 
-                TextInput::make('identity_number')
-                    ->label('No Induk Siswa')
-                    ->required()
-                    ->unique(Visitor::class, 'identity_number')
-                    ->maxLength(20),
-
-                DateTimePicker::make('visiting_time')
-                    ->label('Waktu Kunjungan')
-                    ->default(now())
-                    ->required(),
-            ]);
+            TextInput::make('identity_number')
+                ->label('No Induk Siswa')
+                ->unique(Visitor::class, 'identity_number', ignoreRecord: true)
+                ->required()
+                ->maxLength(20),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -63,18 +62,12 @@ class VisitorResource extends Resource
                     ->label('No Induk Siswa')
                     ->sortable()
                     ->searchable(),
-
-                TextColumn::make('visiting_time')
-                    ->label('Waktu Kunjungan')
-                    ->dateTime('d M Y H:i')
-                    ->sortable(),
-
             ])
             ->filters([
                 //
             ])
             ->actions([
-                //
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
