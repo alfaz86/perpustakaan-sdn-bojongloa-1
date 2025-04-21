@@ -23,7 +23,9 @@ class BookResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Data Buku';
 
-    protected static ?string $navigationLabel = 'Buku';
+    protected static ?string $navigationLabel = 'Data Buku';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -64,6 +66,9 @@ class BookResource extends Resource
         return $table
             ->recordUrl(null)
             ->columns([
+                TextColumn::make('no')
+                    ->label('No')
+                    ->rowIndex(),
                 TextColumn::make('code')
                     ->label('ID Buku')
                     ->sortable()
@@ -89,7 +94,18 @@ class BookResource extends Resource
                         'success' => Book::AVAILABLE,
                         'danger' => Book::NOT_AVAILABLE,
                     ])
-                    ->formatStateUsing(fn(string $state): string => Book::INFORMATIONs[$state] ?? $state),
+                    ->formatStateUsing(fn(string $state): string => Book::INFORMATIONs[$state] ?? $state)
+                    ->tooltip(function ($record) {
+                        $bookLending = $record->book_lendings()
+                            ->whereHas('report', fn($query) => $query->whereNull('return_date'))
+                            ->latest()
+                            ->first();
+
+                        return $bookLending && $bookLending->visitor
+                            ? 'Sedang dipinjam oleh: ' . $bookLending->visitor->name
+                            : null;
+                    }),
+
             ])
             ->filters([
                 //
