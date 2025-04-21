@@ -26,6 +26,8 @@ class ListVisits extends ListRecords
     
                         $data['visitor_id'] = $visitor->id;
                     }
+
+                    $data['visiting_time'] = now()->format('Y-m-d H:i:s');
     
                     return $data;
                 }),

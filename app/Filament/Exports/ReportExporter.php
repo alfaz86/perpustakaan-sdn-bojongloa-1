@@ -24,11 +24,11 @@ class ReportExporter extends Exporter
             ExportColumn::make('book_lending.lending_date')
                 ->label('Tanggal Peminjaman')
                 ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->format('d/m/Y') : '-'),
-            ExportColumn::make('book_lending.return_date')
-                ->label('Tanggal Pengembalian')
+            ExportColumn::make('book_lending.due_date')
+                ->label('Batas Pengembalian')
                 ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->format('d/m/Y') : '-'),
             ExportColumn::make('return_date')
-                ->label('Dikembalikan Pada Tanggal')
+                ->label('Tanggal Pengembalian')
                 ->formatStateUsing(fn ($state) => $state ? Carbon::parse($state)->format('d/m/Y') : '-'),
             ExportColumn::make('fine')
                 ->label('Denda'),

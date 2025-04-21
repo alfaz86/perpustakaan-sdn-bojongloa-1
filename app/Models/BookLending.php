@@ -9,7 +9,7 @@ class BookLending extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['visitor_id', 'book_id', 'lending_date', 'return_date'];
+    protected $fillable = ['visitor_id', 'book_id', 'lending_date', 'due_date'];
 
     protected static function boot()
     {
@@ -31,13 +31,19 @@ class BookLending extends Model
         });
 
         static::deleting(function ($bookLending) {
-            $book = Book::where('id', $bookLending->book_id);
-            $report = Report::where('book_lending_id', $bookLending->id);
+            $report = Report::where('book_lending_id', $bookLending->id)->first();
 
-            if ($book->exists()) {
+            if ($report && $report->status !== 'Belum Kembali') {
+                throw new \Exception('Peminjaman tidak bisa dihapus karena sebagian peminjaman sudah masuk ke pencatatan laporan.');
+            }
+
+            $book = Book::find($bookLending->book_id);
+
+            if ($book) {
                 $book->update(['information' => 'available']);
             }
-            if ($report->exists()) {
+
+            if ($report) {
                 $report->delete();
             }
         });
@@ -51,5 +57,10 @@ class BookLending extends Model
     public function book()
     {
         return $this->belongsTo(Book::class);
+    }
+
+    public function report()
+    {
+        return $this->hasOne(Report::class);
     }
 }

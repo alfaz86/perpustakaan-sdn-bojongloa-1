@@ -6,7 +6,9 @@ use App\Filament\Resources\VisitResource\Pages;
 use App\Filament\Resources\VisitResource\RelationManagers;
 use App\Models\Visit;
 use App\Models\Visitor;
+use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
@@ -32,6 +34,8 @@ class VisitResource extends Resource
 
     protected static ?string $navigationLabel = 'Data Kunjungan';
 
+    protected static ?int $navigationSort = 3;
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -41,53 +45,61 @@ class VisitResource extends Resource
                     ->searchable()
                     ->placeholder('Cari Pengunjung')
                     ->searchPrompt('Ketik Nama atau NIS Siswa...')
-                    ->getSearchResultsUsing(function (string $search) {
+                    ->getSearchResultsUsing(function (?string $search) {
                         return Visitor::query()
-                            ->where('name', 'like', "%{$search}%")
-                            ->orWhere('identity_number', 'like', "%{$search}%")
+                            ->when($search, function ($query, $search) {
+                                $query->where('name', 'like', "%{$search}%")
+                                    ->orWhere('identity_number', 'like', "%{$search}%");
+                            })
                             ->limit(10)
-                            ->pluck('name', 'id');
+                            ->get()
+                            ->mapWithKeys(function ($visitor) {
+                                return [
+                                    $visitor->id => "{$visitor->name} - {$visitor->identity_number}",
+                                ];
+                            });
                     })
                     ->getOptionLabelUsing(fn($value) => Visitor::find($value)?->name)
                     ->reactive()
                     ->afterStateUpdated(function ($state, callable $set) {
                         $visitor = Visitor::find($state);
                         if ($visitor) {
-                            $set('identity_number', $visitor->identity_number);
-                            $set('name', $visitor->name);
+                            $set('visitor.identity_number', $visitor->identity_number);
+                            $set('visitor.name', $visitor->name);
                         }
                     })
                     ->columnSpan(6),
             ]),
 
-            TextInput::make('name')
+            TextInput::make('visitor.name')
                 ->label('Nama Pengunjung')
                 ->required()
                 ->maxLength(255),
 
-            TextInput::make('identity_number')
+            TextInput::make('visitor.identity_number')
                 ->label('No Induk Siswa')
                 ->required()
                 ->maxLength(20)
                 ->rule(function (Get $get) {
                     return function (string $attribute, $value, \Closure $fail) use ($get) {
                         $visitorId = $get('visitor_id');
-                
+
                         // Hanya jalankan validasi jika visitor_id kosong (pengunjung baru)
                         if (empty($visitorId)) {
                             $exists = Visitor::where('identity_number', $value)->exists();
-                
+
                             if ($exists) {
                                 $fail("Nomor induk ini sudah digunakan.");
                             }
                         }
                     };
                 })
-                ,
+            ,
 
-            DateTimePicker::make('visiting_time')
+            DatePicker::make('visiting_time')
                 ->label('Waktu Kunjungan')
                 ->default(now())
+                ->minDate(now()->startOfDay())
                 ->required(),
         ]);
     }
@@ -111,7 +123,7 @@ class VisitResource extends Resource
 
                 TextColumn::make('visiting_time')
                     ->label('Waktu Kunjungan')
-                    ->dateTime('d M Y H:i')
+                    ->formatStateUsing(fn($state) => $state ? Carbon::parse($state)->format('d/m/Y') : '-')
                     ->sortable(),
             ])
             ->filters([

@@ -67,7 +67,10 @@ class Data extends Page implements HasTable
     public static function table(Table $table): Table
     {
         return $table
-            ->query(Report::with(['book_lending.visitor', 'book_lending.book']))
+            ->query(Report::with([
+                'book_lending.visitor',
+                'book_lending.book' => fn ($query) => $query->withTrashed(),
+            ]))
             ->recordUrl(null)
             ->columns([
                 TextColumn::make('no')
@@ -85,11 +88,11 @@ class Data extends Page implements HasTable
                 TextColumn::make('book_lending.lending_date')
                     ->label('Tanggal Peminjaman')
                     ->formatStateUsing(fn($state) => $state ? Carbon::parse($state)->format('d/m/Y') : '-'),
-                TextColumn::make('book_lending.return_date')
-                    ->label('Tanggal Pengembalian')
+                TextColumn::make('book_lending.due_date')
+                    ->label('Batas Pengembalian')
                     ->formatStateUsing(fn($state) => $state ? Carbon::parse($state)->format('d/m/Y') : '-'),
                 TextColumn::make('returned_on_date')
-                    ->label('Dikembalikan Pada Tanggal'),
+                    ->label('Tanggal Pengembalian'),
                 TextColumn::make('fine')
                     ->label('Denda'),
                 BadgeColumn::make('status')
@@ -120,12 +123,12 @@ class Data extends Page implements HasTable
 
                                 if ($state['value'] === 'Sudah Kembali') {
                                     $subQuery->whereNotNull('reports.return_date')
-                                        ->whereRaw('reports.return_date BETWEEN book_lendings.lending_date AND book_lendings.return_date');
+                                        ->whereRaw('reports.return_date BETWEEN book_lendings.lending_date AND book_lendings.due_date');
                                 }
 
                                 if ($state['value'] === 'Terlambat') {
                                     $subQuery->whereNotNull('reports.return_date')
-                                        ->whereRaw('reports.return_date > book_lendings.return_date');
+                                        ->whereRaw('reports.return_date > book_lendings.due_date');
                                 }
                             });
                         });
@@ -140,7 +143,7 @@ class Data extends Page implements HasTable
                 EditAction::make()
                     ->form([
                         \Filament\Forms\Components\DatePicker::make('return_date')
-                            ->label('Dikembalikan Pada Tanggal')
+                            ->label('Tanggal Pengembalian')
                             ->required()
                             ->minDate(today())
                             ->maxDate(today())

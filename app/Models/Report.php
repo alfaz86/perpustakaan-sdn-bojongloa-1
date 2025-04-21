@@ -40,19 +40,21 @@ class Report extends Model
 
     public function getStatusAttribute()
     {
-        $bookLendingReturnDate = $this->book_lending->return_date;
+        $bookLendingDueDate = $this->book_lending->due_date;
         $bookLendingStartDate = $this->book_lending->lending_date;
         $reportReturnDate = $this->return_date;
+        
+        $actualReturn = Carbon::parse($reportReturnDate);
+        $start = Carbon::parse($bookLendingStartDate);
+        $due = Carbon::parse($bookLendingDueDate);
 
-        if (is_null($bookLendingReturnDate)) {
-            return 'Belum Kembali';
+        if (is_null($reportReturnDate)) {
+            if (Carbon::now()->between($start, $due)) {
+                return 'Dipinjam';
+            }
         }
 
         if ($reportReturnDate) {
-            $actualReturn = Carbon::parse($reportReturnDate);
-            $start = Carbon::parse($bookLendingStartDate);
-            $due = Carbon::parse($bookLendingReturnDate);
-
             if ($actualReturn->between($start, $due)) {
                 return 'Sudah Kembali';
             }

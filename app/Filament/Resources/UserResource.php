@@ -24,6 +24,13 @@ class UserResource extends Resource
 
     protected static ?string $navigationLabel = 'User';
 
+    protected static ?int $navigationSort = 4;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->role === 'admin';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
