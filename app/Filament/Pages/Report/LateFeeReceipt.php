@@ -50,7 +50,7 @@ class LateFeeReceipt extends Page implements HasTable
                 TextColumn::make('no')
                     ->label('No')
                     ->rowIndex(),
-                TextColumn::make('file_name')
+                TextColumn::make('file_name_with_extension')
                     ->label('Nama File')
                     ->searchable(),
                 TextColumn::make('file_size')
@@ -83,12 +83,12 @@ class LateFeeReceipt extends Page implements HasTable
                 //
             ])
             ->actions([
-                Action::make('download')
-                    ->label('Download')
-                    ->url(fn($record) => route('report.late-fee-receipt.download', $record))
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->color('success')
-                    ->openUrlInNewTab(),
+                // Action::make('download')
+                //     ->label('Download')
+                //     ->url(fn($record) => route('report.late-fee-receipt.download', $record))
+                //     ->icon('heroicon-o-arrow-down-tray')
+                //     ->color('success')
+                //     ->openUrlInNewTab(),
             ])
             ->headerActions([
                 Action::make('uploadReceipt')
@@ -113,10 +113,6 @@ class LateFeeReceipt extends Page implements HasTable
                             ->maxSize(1024 * 10)
                             ->storeFiles()
                             ->preserveFilenames(),
-                        DatePicker::make('date')
-                            ->label('Tanggal Setoran')
-                            ->required()
-                            ->default(now()),
                     ])
                     ->action(function (array $data) {
                         self::setFileDatabase($data);
@@ -153,7 +149,7 @@ class LateFeeReceipt extends Page implements HasTable
             'file_name' => pathinfo($path, PATHINFO_FILENAME),
             'file_path' => pathinfo($path, PATHINFO_BASENAME),
             'file_size' => $fileSize,
-            'date' => $data['date'],
+            'date' => now(),
             'status' => LateFeeReceiptModel::PENDING,
         ]);
     }

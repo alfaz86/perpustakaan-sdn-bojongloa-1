@@ -2,8 +2,10 @@
     <div class="flex flex-wrap gap-2 mb-6">
         @foreach (App\Filament\Pages\Report\Data::getSubMenuItems() as $item)
             @php
-                $isActive = request()->routeIs($item['route']);
+                $currentRoute = static::getRouteName();
+                $isActive = $currentRoute === $item['route'];
             @endphp
+    
             <a
                 href="{{ route($item['route']) }}"
                 @class([
@@ -17,4 +19,5 @@
         @endforeach
     </div>
 
+    {{ $this->table }}
 </x-filament::page>
