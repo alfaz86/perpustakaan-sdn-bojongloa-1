@@ -6,6 +6,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -64,12 +65,19 @@ class AdminPanelProvider extends PanelProvider
                 function () {
                     // check if route is not admin/dashboard
                     // if (!request()->routeIs('filament.panel.pages.dashboard')) {
-                        return view('filament.footer');
+                    return view('filament.footer');
                     // }
                 }
             )
             ->theme(asset('css/filament/panel/theme.css'))
             ->darkMode(false)
-            ->databaseNotifications();
+            ->databaseNotifications()
+            ->navigationItems([
+                NavigationItem::make('Laporan')
+                    ->url('panel/report*')
+                    ->icon('heroicon-o-document-text')
+                    ->isActiveWhen(fn(): bool => request()->is('panel/report*'))
+                    ->sort(5),
+            ]);
     }
 }

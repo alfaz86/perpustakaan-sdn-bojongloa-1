@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class LateFeeReceipt extends Model
+class ReportUpload extends Model
 {
     protected $fillable = [
         'file_data',

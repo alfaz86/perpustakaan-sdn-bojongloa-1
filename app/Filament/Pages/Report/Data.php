@@ -28,11 +28,7 @@ class Data extends Page implements HasTable
 
     protected static ?string $title = 'Laporan';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?int $navigationSort = 5;
-
-    protected static ?string $navigationLabel = 'Laporan';
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $slug = 'report';
 
