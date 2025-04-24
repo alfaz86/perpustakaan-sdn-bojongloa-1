@@ -65,7 +65,7 @@ class Data extends Page implements HasTable
         return $table
             ->query(Report::with([
                 'book_lending.visitor',
-                'book_lending.book' => fn ($query) => $query->withTrashed(),
+                'book_lending.book' => fn($query) => $query->withTrashed(),
             ]))
             ->recordUrl(null)
             ->columns([
@@ -102,6 +102,7 @@ class Data extends Page implements HasTable
                 SelectFilter::make('status')
                     ->label('Status Pengembalian')
                     ->options([
+                        'Dipinjam' => 'Dipinjam',
                         'Belum Kembali' => 'Belum Kembali',
                         'Sudah Kembali' => 'Sudah Kembali',
                         'Terlambat' => 'Terlambat',
@@ -113,8 +114,13 @@ class Data extends Page implements HasTable
 
                         $query->whereHas('book_lending', function ($q) use ($state) {
                             $q->where(function ($subQuery) use ($state) {
+                                if ($state['value'] === 'Dipinjam') {
+                                    $subQuery->whereRaw('book_lendings.lending_date <= ? AND book_lendings.due_date >= ?', [now(), now()]);
+                                }
+
                                 if ($state['value'] === 'Belum Kembali') {
-                                    $subQuery->whereNull('reports.return_date');
+                                    $subQuery->whereNull('reports.return_date')
+                                        ->whereRaw('book_lendings.due_date < ?', [now()]);
                                 }
 
                                 if ($state['value'] === 'Sudah Kembali') {

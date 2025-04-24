@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Report\Data;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -74,7 +75,7 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->navigationItems([
                 NavigationItem::make('Laporan')
-                    ->url('panel/report*')
+                    ->url(url('panel/report'))
                     ->icon('heroicon-o-document-text')
                     ->isActiveWhen(fn(): bool => request()->is('panel/report*'))
                     ->sort(5),
