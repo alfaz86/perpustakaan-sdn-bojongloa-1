@@ -32,4 +32,9 @@ class LateFeeReceipt extends Model
     {
         return $this->file_name . '.' . pathinfo($this->file_path, PATHINFO_EXTENSION);
     }
+
+    public function getIsPdfFileAttribute()
+    {
+        return pathinfo($this->file_path, PATHINFO_EXTENSION) === 'pdf';
+    }
 }

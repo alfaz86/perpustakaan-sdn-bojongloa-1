@@ -12,10 +12,6 @@ class Book extends Model
 
     const AVAILABLE = 'available';
     const NOT_AVAILABLE = 'not available';
-    const INFORMATIONs = [
-        self::AVAILABLE => 'Tersedia',
-        self::NOT_AVAILABLE => 'Tidak Tersedia',
-    ];
 
     protected $fillable = [
         'code',

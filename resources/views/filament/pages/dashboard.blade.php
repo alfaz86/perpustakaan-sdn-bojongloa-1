@@ -13,11 +13,11 @@
     <div class="flex flex-col items-center h-screen margin-bottom-content">
         <img src="{{ asset('images/perpustakaan.jpg') }}" alt="Jumbotron" class="w-full h-64 object-cover mb-4">
         
-        <p class="text-xl font-bold text-gray-800 text-center text-below" style="margin-bottom: 50px;">
+        <p class="text-xl font-bold text-gray-800 text-center text-below">
             Perpustakaan SDN Bojongloa 1 Merupakan Perpustakaan yang berperan aktif dalam mewujudkan visi dan misi perpustakaan yakni menumbuhkan minat baca siswa serta mengoptimalkan pembelajaran dengan metode kurikulum sekolah
         </p>
         
-        <div class="flex justify-center" style="gap: 96px;">
+        {{-- <div class="flex justify-center" style="gap: 96px;">
             @foreach (['instagram', 'tiktok', 'facebook'] as $icon)
                 <div class="flex items-center justify-center" style="width: 48px; height: 48px;">
                     <a href="https://{{ $icon }}.com" target="_blank" rel="noopener noreferrer">
@@ -25,6 +25,6 @@
                     </a>
                 </div>
             @endforeach
-        </div>
+        </div> --}}
     </div>
 </x-filament::widget>

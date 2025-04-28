@@ -17,9 +17,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     const ROLE_USER = 'user';
     const ROLE_ADMIN = 'admin';
+    const ROLE_OFFICER = 'officer';
     const ROLES = [
         self::ROLE_USER,
         self::ROLE_ADMIN,
+        self::ROLE_OFFICER,
     ];
 
     /**
@@ -59,7 +61,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->role === self::ROLE_ADMIN;
+        return $this->role === self::ROLE_ADMIN || $this->role === self::ROLE_OFFICER;
     }
 
     public function getFilamentAvatarUrl(): ?string

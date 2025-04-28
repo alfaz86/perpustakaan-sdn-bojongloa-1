@@ -16,7 +16,7 @@ class ReportController extends Controller
 
         return Response::make($receipt->file_data, 200, [
             'Content-Type' => $contentType,
-            'Content-Disposition' => 'attachment; filename="' . $receipt->file_path . '"',
+            'Content-Disposition' => 'inline; filename="' . $receipt->file_path . '"',
         ]);
     }
 
