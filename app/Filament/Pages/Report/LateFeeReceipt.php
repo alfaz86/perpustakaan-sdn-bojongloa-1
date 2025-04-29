@@ -91,13 +91,19 @@ class LateFeeReceipt extends Page implements HasTable
                 ActionGroup::make([
                     Action::make('download')
                         ->label('Download')
-                        ->url(fn($record) => route('report.late-fee-receipt.download', $record))
+                        ->url(fn($record) => route('report.late-fee-receipt', [
+                            $record,
+                            'type' => 'download',
+                        ]))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('success')
                         ->openUrlInNewTab(),
                     Action::make('preview')
                         ->label('Preview Pdf')
-                        ->url(fn($record) => route('report.late-fee-receipt.download', $record))
+                        ->url(fn($record) => route('report.late-fee-receipt', [
+                            $record,
+                            'type' => 'preview',
+                        ]))
                         ->icon('heroicon-o-eye')
                         ->color(fn($record) => $record->is_pdf_file ? Color::Amber : 'gray')
                         ->disabled(fn($record) => !$record->is_pdf_file)
@@ -135,6 +141,10 @@ class LateFeeReceipt extends Page implements HasTable
                         ->hidden(
                             function ($record) {
                                 if (auth()->user()->role === User::ROLE_ADMIN) {
+                                    return true;
+                                }
+
+                                if ($record->status !== LateFeeReceiptModel::PENDING) {
                                     return true;
                                 }
 

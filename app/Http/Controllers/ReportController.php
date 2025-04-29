@@ -3,23 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\LateFeeReceipt;
+use App\Models\ReportUpload;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Support\Facades\Response;
 
 class ReportController extends Controller
 {
-    public function lateFeeReceiptDownload($id)
+    public function lateFeeReceipt($id)
     {
         $receipt = LateFeeReceipt::findOrFail($id);
 
+        $type = request()->query('type', 'preview');
         $contentType = $this->getMimeType($receipt->file_path);
+
+        $disposition = $type === 'download'
+            ? 'attachment'
+            : 'inline';
 
         return Response::make($receipt->file_data, 200, [
             'Content-Type' => $contentType,
-            'Content-Disposition' => 'inline; filename="' . $receipt->file_path . '"',
+            'Content-Disposition' => $disposition . '; filename="' . $receipt->file_path . '"',
         ]);
     }
-
     private function getMimeType($fileName)
     {
         return match (pathinfo($fileName, PATHINFO_EXTENSION)) {
@@ -62,4 +67,20 @@ class ReportController extends Controller
         abort(404, 'File not found.');
     }
 
+    public function uploadReport($id)
+    {
+        $upload = ReportUpload::findOrFail($id);
+
+        $type = request()->query('type', 'preview');
+        $contentType = $this->getMimeType($upload->file_path);
+
+        $disposition = $type === 'download'
+            ? 'attachment'
+            : 'inline';
+
+        return Response::make($upload->file_data, 200, [
+            'Content-Type' => $contentType,
+            'Content-Disposition' => $disposition . '; filename="' . $upload->file_path . '"',
+        ]);
+    }
 }
