@@ -89,7 +89,7 @@ class VisitResource extends Resource
                             $exists = Visitor::where('identity_number', $value)->exists();
 
                             if ($exists) {
-                                $fail("Nomor induk ini sudah digunakan.");
+                                $fail(__('The identity number has already been taken.'));
                             }
                         }
                     };

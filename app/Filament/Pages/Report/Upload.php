@@ -3,11 +3,14 @@
 namespace App\Filament\Pages\Report;
 
 use App\Models\ReportUpload;
-use Filament\Forms\Components\DatePicker;
+use App\Models\User;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Colors\Color;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\BadgeColumn;
@@ -83,12 +86,70 @@ class Upload extends Page implements HasTable
                 //
             ])
             ->actions([
-                // Action::make('download')
-                //     ->label('Download')
-                //     ->url(fn($record) => route('report.late-fee-receipt.download', $record))
-                //     ->icon('heroicon-o-arrow-down-tray')
-                //     ->color('success')
-                //     ->openUrlInNewTab(),
+                ActionGroup::make([
+                    Action::make('download')
+                        ->label('Download')
+                        ->url(fn($record) => route('report.upload', [
+                            $record,
+                            'type' => 'download',
+                        ]))
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->color('success')
+                        ->openUrlInNewTab(),
+                    Action::make('preview')
+                        ->label('Preview Pdf')
+                        ->url(fn($record) => route('report.upload', [
+                            $record,
+                            'type' => 'preview',
+                        ]))
+                        ->icon('heroicon-o-eye')
+                        ->color(fn($record) => $record->is_pdf_file ? Color::Amber : 'gray')
+                        ->disabled(fn($record) => !$record->is_pdf_file)
+                        ->openUrlInNewTab(),
+                    Action::make('changeStatus')
+                        ->label('Edit')
+                        ->icon('heroicon-o-pencil')
+                        ->color('primary')
+                        ->modalHeading(__('Change Status'))
+                        ->form([
+                            Select::make('changeStatus')
+                                ->label('Status')
+                                ->options([
+                                    ReportUpload::PENDING => ucfirst(ReportUpload::PENDING),
+                                    ReportUpload::APPROVED => ucfirst(ReportUpload::APPROVED),
+                                    ReportUpload::REJECTED => ucfirst(ReportUpload::REJECTED),
+                                ])
+                                ->default(function ($record) {
+                                    return $record->status;
+                                })
+                                ->required()
+                                ->native(false),
+                        ])
+                        ->action(function ($record, array $data) {
+                            $newStatus = $data['changeStatus'];
+                            $record->update([
+                                'status' => $newStatus,
+                            ]);
+
+                            Notification::make()
+                                ->title('Status Berhasil Diperbarui')
+                                ->success()
+                                ->send();
+                        })
+                        ->hidden(
+                            function ($record) {
+                                if (auth()->user()->role === User::ROLE_ADMIN) {
+                                    return true;
+                                }
+
+                                if ($record->status !== ReportUpload::PENDING) {
+                                    return true;
+                                }
+
+                                return false;
+                            }
+                        ),
+                ])
             ])
             ->headerActions([
                 Action::make('uploadReceipt')

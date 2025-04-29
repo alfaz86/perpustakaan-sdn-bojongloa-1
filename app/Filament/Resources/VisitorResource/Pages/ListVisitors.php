@@ -14,7 +14,6 @@ class ListVisitors extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create Data')
                 ->icon('heroicon-s-plus'),
         ];
     }

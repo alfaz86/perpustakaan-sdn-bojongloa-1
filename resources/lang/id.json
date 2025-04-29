@@ -1,0 +1,16 @@
+{
+    "Admin": "Admin",
+    "Officer": "Petugas",
+    "User": "User",
+    "Available": "Tersedia",
+    "Not Available": "Tidak Tersedia",
+    "Being borrowed by": "Sedang dipinjam oleh",
+    "Pending": "Menunggu",
+    "Approved": "Disetujui",
+    "Rejected": "Ditolak",
+    "Done": "Selesai",
+    "Accepted": "Diterima",
+    "The book code has been used.": "Kode buku sudah digunakan.",
+    "The identity number has already been taken.": "Nomor induk ini sudah digunakan.",
+    "Change Status": "Ubah Status"
+}

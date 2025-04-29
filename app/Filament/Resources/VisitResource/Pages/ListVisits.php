@@ -15,7 +15,6 @@ class ListVisits extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Create Data')
                 ->icon('heroicon-s-plus')
                 ->mutateFormDataUsing(function (array $data): array {
                     if (empty($data['visitor_id'])) {

@@ -53,10 +53,11 @@ class BookResource extends Resource
                 Select::make('information')
                     ->label('Keterangan')
                     ->options([
-                        Book::AVAILABLE => 'Tersedia',
-                        Book::NOT_AVAILABLE => 'Tidak Tersedia',
+                        Book::AVAILABLE => __(ucwords(Book::AVAILABLE)),
+                        Book::NOT_AVAILABLE => __(ucwords(Book::NOT_AVAILABLE)),
                     ])
-                    ->required(),
+                    ->required()
+                    ->native(false),
 
             ]);
     }
@@ -94,7 +95,7 @@ class BookResource extends Resource
                         'success' => Book::AVAILABLE,
                         'danger' => Book::NOT_AVAILABLE,
                     ])
-                    ->formatStateUsing(fn(string $state): string => Book::INFORMATIONs[$state] ?? $state)
+                    ->formatStateUsing(fn(string $state): string => __(ucwords($state)) ?? $state)
                     ->tooltip(function ($record) {
                         $bookLending = $record->book_lendings()
                             ->whereHas('report', fn($query) => $query->whereNull('return_date'))
@@ -102,7 +103,7 @@ class BookResource extends Resource
                             ->first();
 
                         return $bookLending && $bookLending->visitor
-                            ? 'Sedang dipinjam oleh: ' . $bookLending->visitor->name
+                            ? __("Being borrowed by") . ": " . $bookLending->visitor->name
                             : null;
                     }),
 

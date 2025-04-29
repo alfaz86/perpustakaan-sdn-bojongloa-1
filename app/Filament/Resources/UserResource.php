@@ -4,13 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
-use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class UserResource extends Resource
 {
@@ -28,7 +29,8 @@ class UserResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->role === 'admin';
+        $user = Auth::user();
+        return $user->role === User::ROLE_ADMIN || $user->role === User::ROLE_OFFICER;
     }
 
     public static function form(Form $form): Form
@@ -48,10 +50,19 @@ class UserResource extends Resource
                 TextInput::make('password')
                     ->label('Password')
                     ->password()
+                    ->revealable()
+                    ->autocomplete('off')
                     ->placeholder('Password')
                     ->dehydrated(fn($state) => filled($state))
                     ->required(fn($record) => is_null($record?->id)),
-                Hidden::make('role')->default('admin'),
+                Select::make('role')
+                    ->label('Role')
+                    ->options([
+                        User::ROLE_ADMIN => __('Admin'),
+                        User::ROLE_OFFICER => __('Officer'),
+                    ])
+                    ->default(User::ROLE_ADMIN)
+                    ->native(false),
             ]);
     }
 
