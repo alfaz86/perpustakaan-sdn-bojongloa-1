@@ -18,7 +18,7 @@ return new class extends Migration
             if (DB::getDriverName() === 'pgsql') {
                 $table->binary('file_data')->nullable();
             } else {
-                $table->mediumBlob('file_data')->nullable();
+                $table->mediumText('file_data')->charset('binary')->nullable();
             }
             $table->string('file_name');
             $table->string('file_path')->nullable();
