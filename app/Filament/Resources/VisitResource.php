@@ -48,8 +48,8 @@ class VisitResource extends Resource
                     ->getSearchResultsUsing(function (?string $search) {
                         return Visitor::query()
                             ->when($search, function ($query, $search) {
-                                $query->where('name', 'like', "%{$search}%")
-                                    ->orWhere('identity_number', 'like', "%{$search}%");
+                                $query->where('name', config('database.like_operator'), "%{$search}%")
+                                    ->orWhere('identity_number', config('database.like_operator'), "%{$search}%");
                             })
                             ->limit(10)
                             ->get()

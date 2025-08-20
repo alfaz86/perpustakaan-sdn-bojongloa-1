@@ -18,6 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class Upload extends Page implements HasTable
@@ -199,7 +200,11 @@ class Upload extends Page implements HasTable
         $path = $data['file'];
 
         if (Storage::disk('public')->exists($path)) {
-            $fileData = Storage::disk('public')->get($path);
+            if (DB::getDriverName() === 'pgsql') {
+                $fileData = fopen(Storage::disk('public')->path($path), 'rb');
+            } else {
+                $fileData = Storage::disk('public')->get($path);
+            }
             $fileSize = Storage::disk('public')->size($path);
         } else {
             return;

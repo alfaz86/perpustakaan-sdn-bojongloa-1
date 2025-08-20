@@ -3,6 +3,7 @@
 use App\Models\LateFeeReceipt;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -14,11 +15,15 @@ return new class extends Migration
     {
         Schema::create('late_fee_receipts', function (Blueprint $table) {
             $table->id();
-            $table->mediumText('file_data')->charset('binary')->nullable();
+            if (DB::getDriverName() === 'pgsql') {
+                $table->binary('file_data')->nullable();
+            } else {
+                $table->mediumBlob('file_data')->nullable();
+            }
             $table->string('file_name');
             $table->string('file_path')->nullable();
             $table->unsignedBigInteger('file_size');
-            $table->date('date');column: 
+            $table->date('date');
             $table->string('status')->default(LateFeeReceipt::PENDING);
             $table->timestamps();
         });

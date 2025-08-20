@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class LateFeeReceipt extends Model
@@ -36,5 +37,12 @@ class LateFeeReceipt extends Model
     public function getIsPdfFileAttribute()
     {
         return pathinfo($this->file_path, PATHINFO_EXTENSION) === 'pdf';
+    }
+
+    protected function fileData(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => is_resource($value) ? stream_get_contents($value) : $value
+        );
     }
 }

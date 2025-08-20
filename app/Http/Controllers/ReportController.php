@@ -57,8 +57,13 @@ class ReportController extends Controller
             $notification->markAsRead();
         }
 
-        if ($export->file_data) {
-            return response($export->file_data, 200, [
+        $fileData = $export->file_data;
+        if (is_resource($fileData)) {
+            $fileData = stream_get_contents($fileData);
+        }
+
+        if ($fileData !== false && $fileData !== null) {
+            return response($fileData, 200, [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'Content-Disposition' => 'attachment; filename="data-laporan-' . $export->id . '.xlsx"',
             ]);

@@ -56,8 +56,8 @@ class BookLendingResource extends Resource
                     ->placeholder('Cari Buku...')
                     ->getSearchResultsUsing(function (string $search) {
                         return Book::query()
-                            ->where('title', 'like', "%{$search}%")
-                            ->orWhere('information', 'like', "%{$search}%")
+                            ->where('title', config('database.like_operator'), "%{$search}%")
+                            ->orWhere('information', config('database.like_operator'), "%{$search}%")
                             ->limit(10)
                             ->get()
                             ->mapWithKeys(function ($book) {
